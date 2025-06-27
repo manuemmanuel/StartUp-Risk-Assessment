@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import FloatingChatbot from "@/components/FloatingChatbot";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -24,6 +25,7 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} antialiased`}
       >
         {children}
+        <FloatingChatbot />
       </body>
     </html>
   );
