@@ -103,41 +103,51 @@ export default function StartupCostForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 shadow rounded-lg ">
-      <div className="w-full max-w-2xl rounded-3xl shadow-2xl border border-border bg-background/90 backdrop-blur-lg p-8 sm:p-12">
-        <h1 className="text-2xl font-bold mb-4">Startup Cost Entry</h1>
-        <form className="divide-y">
-          {groups.map((group, groupIdx) => (
-            <div
-              key={group.key}
-              className={groupIdx < groups.length - 1 ? "mb-4" : ""}
-            >
-              <h2 className="text-lg font-semibold mb-2">{group.title}</h2>
+    <div className="w-full">
+      <div className="flex items-center mb-8">
+        <span className="inline-block text-3xl align-middle mr-3 text-primary">
+          💰
+        </span>
+        <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
+          Startup Cost Entry
+        </h2>
+      </div>
+      
+      <div className="space-y-8">
+        {groups.map((group, groupIdx) => (
+          <div
+            key={group.key}
+            className="bg-background/30 rounded-xl border border-border p-6"
+          >
+            <h3 className="text-xl font-semibold mb-4 text-foreground">{group.title}</h3>
+            <div className="space-y-3">
               {rows[group.key].map((row, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between py-2 gap-2"
+                  className="flex items-center gap-3"
                 >
                   <input
                     type="text"
-                    className="border rounded p-1 w-2/5"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     value={row.label}
                     onChange={(e) =>
                       handleChange(group.key, idx, "label", e.target.value)
                     }
+                    placeholder="Enter cost item"
                   />
                   <input
                     type="number"
                     min={0}
-                    className="border rounded p-1 w-1/3 text-right"
+                    className="w-32 px-3 py-2 border border-border rounded-lg bg-background text-foreground text-right font-mono focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     value={row.value}
                     onChange={(e) =>
                       handleChange(group.key, idx, "value", e.target.value)
                     }
+                    placeholder="0"
                   />
                   <button
                     type="button"
-                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
+                    className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
                     onClick={() => handleRemoveRow(group.key, idx)}
                     aria-label="Remove row"
                   >
@@ -145,19 +155,22 @@ export default function StartupCostForm() {
                   </button>
                 </div>
               ))}
-              <button
-                type="button"
-                className="mt-2 px-4 py-1 bg-primary text-white rounded"
-                onClick={() => handleAddRow(group.key, group.defaultLabel)}
-              >
-                + Add New Row
-              </button>
             </div>
-          ))}
-        </form>
-        <div className="flex justify-between mt-6 text-xl font-bold border-t pt-4">
+            <button
+              type="button"
+              className="mt-4 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
+              onClick={() => handleAddRow(group.key, group.defaultLabel)}
+            >
+              + Add New Row
+            </button>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-8 p-6 bg-primary/10 rounded-xl border border-border/50">
+        <div className="flex justify-between items-center text-xl font-bold text-foreground">
           <span>Starting Operations (Budgeted)</span>
-          <span>₹{startingOps.toLocaleString("en-IN")}</span>
+          <span className="text-primary font-mono">₹{startingOps.toLocaleString("en-IN")}</span>
         </div>
       </div>
     </div>

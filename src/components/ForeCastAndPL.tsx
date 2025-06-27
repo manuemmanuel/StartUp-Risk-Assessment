@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import FinancialVisualizations from './FinancialVisualizations';
+import FinancialPredictions from './FinancialPredictions';
 
 const months = [
   "Jan",
@@ -48,8 +50,10 @@ export default function ForecastPL() {
   const [salesData, setSalesData] = useState(defaultSalesData);
   const [salaryRows, setSalaryRows] = useState(defaultSalaryRows);
   const [expenseRows, setExpenseRows] = useState(defaultExpenseRows);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     setSalesData(loadFromStorage("sales_forecast_table", defaultSalesData));
     setSalaryRows(loadFromStorage("salary_planner", defaultSalaryRows));
   }, []);
@@ -136,95 +140,136 @@ export default function ForecastPL() {
     }
   }, [results]);
 
-  return (
-    <div className="max-w-9xl mx-auto p-6 shadow rounded-lg">
+  // Don't render until client-side
+  if (!isClient) {
+    return (
       <div className="w-full rounded-3xl shadow-2xl border border-border bg-background/90 backdrop-blur-lg p-8 sm:p-12">
-        <h1 className="text-2xl font-bold mb-4">
-          Forecast & Profit & Loss (P&L)
-        </h1>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground/80">Loading Forecast & P&L...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Prepare data for visualizations
+  const vizData = months.map((month, i) => ({
+    month,
+    cashSales: results[i].cash_sales,
+    totalExpenses: results[i].total_expenses,
+    netProfitLoss: results[i].net_profit_or_loss,
+    grossProfitMargin: results[i].gross_profit_margin,
+    netProfitMargin: results[i].net_profit_margin,
+  }));
+
+  return (
+    <div className="space-y-12">
+      {/* Financial Visualizations Section */}
+      <div className="bg-background/50 backdrop-blur-sm rounded-3xl border border-border/50 p-8">
+        <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
+          Financial Overview & Trends
+        </h2>
+        <FinancialVisualizations data={vizData} />
+      </div>
+
+      {/* Financial Predictions Section */}
+      <div className="bg-background/50 backdrop-blur-sm rounded-3xl border border-border/50 p-8">
+        <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
+          AI-Powered Financial Predictions
+        </h2>
+        <FinancialPredictions data={vizData} />
+      </div>
+
+      {/* Detailed Financial Table Section */}
+      <div className="bg-background/50 backdrop-blur-sm rounded-3xl border border-border/50 p-8">
+        <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
+          Detailed Monthly Breakdown
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] text-left text-foreground bg-transparent">
             <thead>
-              <tr>
-                <th className="p-2">Section</th>
+              <tr className="border-b border-border">
+                <th className="p-3 font-semibold text-lg">Section</th>
                 {months.map((m) => (
-                  <th key={m} className="p-2">
+                  <th key={m} className="p-3 font-semibold text-center">
                     {m}
                   </th>
                 ))}
-                <th></th>
+                <th className="w-16"></th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="bg-secondary/80 font-semibold">
-                <td>Cash Sales</td>
+            <tbody className="space-y-2">
+              <tr className="bg-primary/10 font-semibold border-b border-border/50">
+                <td className="p-3 text-lg">Cash Sales</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
-                    {r.cash_sales.toLocaleString("en-IN")}
+                  <td key={i} className="p-3 text-center font-mono">
+                    ₹{r.cash_sales.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr>
-                <td>Cost of Services</td>
+              <tr className="border-b border-border/30">
+                <td className="p-3">Cost of Services</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
-                    {r.cost_of_services.toLocaleString("en-IN")}
+                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                    ₹{r.cost_of_services.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr className="bg-secondary/80 font-semibold">
-                <td>Gross Profit</td>
+              <tr className="bg-primary/10 font-semibold border-b border-border/50">
+                <td className="p-3 text-lg">Gross Profit</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
-                    {r.gross_profit.toLocaleString("en-IN")}
+                  <td key={i} className="p-3 text-center font-mono text-green-600">
+                    ₹{r.gross_profit.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr>
-                <td>Salary</td>
+              <tr className="border-b border-border/30">
+                <td className="p-3">Salary</td>
                 {totalSalariesPerMonth.map((val: number, i: number) => (
-                  <td key={i} className="p-2">
-                    {val.toLocaleString("en-IN")}
+                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                    ₹{val.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
               {expenseRows.map((row, rowIdx) => (
-                <tr key={rowIdx}>
-                  <td>
+                <tr key={rowIdx} className="border-b border-border/20">
+                  <td className="p-3">
                     <input
                       type="text"
-                      className="border rounded p-1 w-full"
+                      className="border border-border rounded-lg p-2 w-full bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       value={row.label}
                       onChange={(e) =>
                         handleLabelChange(rowIdx, e.target.value)
                       }
+                      placeholder="Expense category"
                     />
                   </td>
                   {row.values.map((val, i) => (
-                    <td key={i}>
+                    <td key={i} className="p-3">
                       <input
                         type="number"
                         min={0}
-                        className="border rounded p-1 w-full text-right"
+                        className="border border-border rounded-lg p-2 w-full text-right font-mono bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                         value={val}
                         onChange={(e) =>
                           handleExpenseChange(rowIdx, i, e.target.value)
                         }
+                        placeholder="0"
                       />
                     </td>
                   ))}
-                  <td>
+                  <td className="p-3">
                     <button
                       type="button"
-                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
+                      className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                       onClick={() => removeExpenseRow(rowIdx)}
                       aria-label="Remove row"
                     >
@@ -235,51 +280,51 @@ export default function ForecastPL() {
               ))}
 
               <tr>
-                <td colSpan={months.length + 1}>
+                <td colSpan={months.length + 1} className="p-4">
                   <button
                     type="button"
-                    className="mt-2 px-4 py-1 bg-primary text-white rounded"
+                    className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-colors"
                     onClick={addExpenseRow}
                   >
-                    + Add New Row
+                    + Add New Expense Row
                   </button>
                 </td>
               </tr>
 
-              <tr className="bg-secondary/80 font-semibold">
-                <td>Total Expenses</td>
+              <tr className="bg-secondary/80 font-semibold border-b border-border/50">
+                <td className="p-3 text-lg">Total Expenses</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
-                    {r.total_expenses.toLocaleString("en-IN")}
+                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                    ₹{r.total_expenses.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr>
-                <td>Net Profit/Loss</td>
+              <tr className="bg-accent/50 font-semibold border-b border-border/50">
+                <td className="p-3 text-lg">Net Profit/Loss</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
-                    {r.net_profit_or_loss.toLocaleString("en-IN")}
+                  <td key={i} className={`p-3 text-center font-mono text-lg ${r.net_profit_or_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ₹{r.net_profit_or_loss.toLocaleString("en-IN")}
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr>
-                <td>Gross Profit Margin</td>
+              <tr className="border-b border-border/30">
+                <td className="p-3">Gross Profit Margin</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
+                  <td key={i} className="p-3 text-center font-mono text-green-600">
                     {(r.gross_profit_margin * 100).toFixed(2)}%
                   </td>
                 ))}
                 <td></td>
               </tr>
 
-              <tr>
-                <td>Net Profit Margin</td>
+              <tr className="border-b border-border/30">
+                <td className="p-3">Net Profit Margin</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-2">
+                  <td key={i} className={`p-3 text-center font-mono ${r.net_profit_margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {(r.net_profit_margin * 100).toFixed(2)}%
                   </td>
                 ))}

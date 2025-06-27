@@ -103,59 +103,63 @@ export default function SalaryPlanner() {
   if (!isLoaded) return null;
 
   return (
-    <div className="overflow-x-auto p-4 max-w-full">
-      <h2 className="text-2xl font-bold mb-4">Salaries Planner</h2>
-      <table className="min-w-max border-collapse border border-gray-300 w-full">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border p-2">Employee</th>
-            {months.map((month) => (
-              <th key={month} className="border p-2">
-                {month}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.rows.map((row) => (
-            <tr key={row.id}>
-              <td className="border p-1">
-                <input
-                  value={row.name}
-                  onChange={(e) => updateName(row.id, e.target.value)}
-                  className="w-full px-2 py-1 border rounded"
-                />
-              </td>
-              {row.monthlySalaries.map((salary, idx) => (
-                <td key={idx} className="border p-1">
+    <div className="w-full">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-left text-foreground bg-transparent">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="p-3 font-semibold text-lg">Employee</th>
+              {months.map((month) => (
+                <th key={month} className="p-3 font-semibold text-center">
+                  {month}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="space-y-2">
+            {data.rows.map((row) => (
+              <tr key={row.id} className="border-b border-border/30">
+                <td className="p-3">
                   <input
-                    type="number"
-                    value={salary}
-                    onChange={(e) => updateCell(row.id, idx, e.target.value)}
-                    className="w-full px-2 py-1 border rounded text-right"
-                    placeholder="₹ 0"
+                    value={row.name}
+                    onChange={(e) => updateName(row.id, e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
+                    placeholder="Employee name"
                   />
+                </td>
+                {row.monthlySalaries.map((salary, idx) => (
+                  <td key={idx} className="p-3">
+                    <input
+                      type="number"
+                      value={salary}
+                      onChange={(e) => updateCell(row.id, idx, e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-right text-foreground font-mono"
+                      placeholder="0"
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+            <tr className="bg-primary/10 font-semibold border-b border-border/50">
+              <td className="p-3 text-lg">Total Salaries</td>
+              {months.map((_, idx) => (
+                <td key={idx} className="p-3 text-center font-mono text-lg">
+                  ₹{totalPerMonth(idx).toLocaleString()}
                 </td>
               ))}
             </tr>
-          ))}
-          <tr className="bg-yellow-100 font-semibold">
-            <td className="border p-2 text-right">Total Salaries</td>
-            {months.map((_, idx) => (
-              <td key={idx} className="border p-2 text-right">
-                ₹ {totalPerMonth(idx).toLocaleString()}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
 
-      <button
-        onClick={addNewRow}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        + Add Employee
-      </button>
+      <div className="mt-8 text-center">
+        <button
+          onClick={addNewRow}
+          className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          + Add Employee
+        </button>
+      </div>
     </div>
   );
 }
