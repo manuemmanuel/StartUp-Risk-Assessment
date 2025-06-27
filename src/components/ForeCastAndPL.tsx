@@ -21,24 +21,7 @@ function loadFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
     const stored = localStorage.getItem(key);
-    const parsed = stored ? JSON.parse(stored) : fallback;
-
-    // Validate structure of sales forecast table
-    if (
-      key === "sales_forecast_table" &&
-      (!Array.isArray(parsed.unitsSold) ||
-        !Array.isArray(parsed.pricePerUnit) ||
-        !Array.isArray(parsed.costPerUnit))
-    ) {
-      return fallback;
-    }
-
-    // Validate structure of salary planner
-    if (key === "salary_planner_rows" && !Array.isArray(parsed.totalPerMonth)) {
-      return fallback;
-    }
-
-    return parsed;
+    return stored ? JSON.parse(stored) : fallback;
   } catch {
     return fallback;
   }
@@ -50,8 +33,8 @@ const defaultSalesData = {
   costPerUnit: Array(12).fill(20),
 };
 
-const defaultSalaryData = {
-  totalPerMonth: Array(12).fill(30000),
+const defaultSalaryRows = {
+  rows: [],
 };
 
 const defaultExpenseRows = [
@@ -63,13 +46,23 @@ const defaultExpenseRows = [
 
 export default function ForecastPL() {
   const [salesData, setSalesData] = useState(defaultSalesData);
-  const [salaryData, setSalaryData] = useState(defaultSalaryData);
+  const [salaryRows, setSalaryRows] = useState(defaultSalaryRows);
   const [expenseRows, setExpenseRows] = useState(defaultExpenseRows);
 
   useEffect(() => {
     setSalesData(loadFromStorage("sales_forecast_table", defaultSalesData));
-    setSalaryData(loadFromStorage("salary_planner_rows", defaultSalaryData));
+    setSalaryRows(loadFromStorage("salary_planner", defaultSalaryRows));
   }, []);
+
+  // Compute salary totals per month
+  const totalSalariesPerMonth = Array(12)
+    .fill(0)
+    .map((_, monthIdx) =>
+      salaryRows.rows.reduce(
+        (sum: number, row: any) => sum + (row.monthlySalaries?.[monthIdx] || 0),
+        0
+      )
+    );
 
   const addExpenseRow = () => {
     setExpenseRows([...expenseRows, { label: "", values: Array(12).fill(0) }]);
@@ -102,7 +95,7 @@ export default function ForecastPL() {
     const cash_sales = no_of_customers * price_per_unit;
     const cost_of_services = no_of_customers * cost_per_unit;
     const gross_profit = cash_sales - cost_of_services;
-    const salary = salaryData.totalPerMonth[i] || 0;
+    const salary = totalSalariesPerMonth[i];
     const additional_expenses = expenseRows.reduce(
       (sum, row) => sum + row.values[i],
       0
@@ -144,7 +137,6 @@ export default function ForecastPL() {
               </tr>
             </thead>
             <tbody>
-              {/* Sales */}
               <tr className="bg-secondary/80 font-semibold">
                 <td>Cash Sales</td>
                 {results.map((r, i) => (
@@ -155,7 +147,6 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* COGS */}
               <tr>
                 <td>Cost of Services</td>
                 {results.map((r, i) => (
@@ -166,7 +157,6 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* Gross Profit */}
               <tr className="bg-secondary/80 font-semibold">
                 <td>Gross Profit</td>
                 {results.map((r, i) => (
@@ -177,10 +167,9 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* Salary */}
               <tr>
                 <td>Salary</td>
-                {salaryData.totalPerMonth.map((val: number, i: number) => (
+                {totalSalariesPerMonth.map((val: number, i: number) => (
                   <td key={i} className="p-2">
                     {val.toLocaleString("en-IN")}
                   </td>
@@ -188,7 +177,6 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* Dynamic Expenses */}
               {expenseRows.map((row, rowIdx) => (
                 <tr key={rowIdx}>
                   <td>
@@ -239,7 +227,6 @@ export default function ForecastPL() {
                 </td>
               </tr>
 
-              {/* Total Expenses */}
               <tr className="bg-secondary/80 font-semibold">
                 <td>Total Expenses</td>
                 {results.map((r, i) => (
@@ -250,7 +237,6 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* Net Profit/Loss */}
               <tr>
                 <td>Net Profit/Loss</td>
                 {results.map((r, i) => (
@@ -261,7 +247,6 @@ export default function ForecastPL() {
                 <td></td>
               </tr>
 
-              {/* Margins */}
               <tr>
                 <td>Gross Profit Margin</td>
                 {results.map((r, i) => (
