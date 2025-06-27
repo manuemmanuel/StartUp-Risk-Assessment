@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   const features = [
     {
@@ -68,6 +70,10 @@ export default function Home() {
     }
   ];
 
+  const handleStartAssessment = () => {
+    router.push('/instructions');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -131,7 +137,9 @@ export default function Home() {
               From startup costs to unit economics, we've got you covered.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors">
+              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors"
+                onClick={handleStartAssessment}
+              >
                 Start Assessment
               </button>
               <button className="border border-border text-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-secondary transition-colors">
@@ -619,7 +627,9 @@ export default function Home() {
           <p className="text-xl mb-8 opacity-90">
             Get started with our comprehensive risk assessment tools and make informed business decisions.
           </p>
-          <button className="bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+          <button className="bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors"
+            onClick={handleStartAssessment}
+          >
             Start Your Assessment
           </button>
         </div>

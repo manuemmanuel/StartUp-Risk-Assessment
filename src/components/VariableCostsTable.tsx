@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 
+// You can swap this for any icon you like
+const TableIcon = () => (
+  <span className="inline-block text-3xl align-middle mr-2 text-primary">🧮</span>
+);
+
 type CostItem = {
   id: number;
   name: string;
@@ -33,48 +38,56 @@ export default function VariableCostsTable() {
   const totalCOGS = costItems.reduce((acc, item) => acc + item.cost, 0);
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-4 border rounded-xl shadow-md bg-white">
-      <h2 className="text-xl font-semibold mb-4">Variable Costs of Products</h2>
-      <table className="w-full border border-gray-300 mb-4">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2 border">Item</th>
-            <th className="p-2 border">Cost (₹)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {costItems.map(item => (
-            <tr key={item.id}>
-              <td className="p-2 border">
-                <input
-                  type="text"
-                  value={item.name}
-                  onChange={e => handleChange(item.id, 'name', e.target.value)}
-                  className="w-full border px-2 py-1"
-                  placeholder="Enter item name"
-                />
-              </td>
-              <td className="p-2 border">
-                <input
-                  type="number"
-                  value={item.cost}
-                  onChange={e => handleChange(item.id, 'cost', e.target.value)}
-                  className="w-full border px-2 py-1"
-                  placeholder="₹ 0"
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button
-        onClick={addNewRow}
-        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        + Add New Row
-      </button>
-      <div className="text-right font-semibold text-lg">
-        Cost of Goods Sold (COGS) per Unit: ₹ {totalCOGS.toFixed(2)}
+    <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary/5 via-accent/10 to-background py-12 px-2 sm:px-0">
+      <div className="w-full max-w-2xl rounded-3xl shadow-2xl border border-border bg-background/90 backdrop-blur-lg p-8 sm:p-12">
+        <div className="flex items-center mb-8">
+          <TableIcon />
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Variable Costs of Products</h2>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-border mb-8 bg-secondary/60">
+          <table className="w-full min-w-[400px] text-left text-foreground bg-transparent">
+            <thead>
+              <tr className="bg-secondary/80">
+                <th className="p-3 font-semibold border-b border-border">Item</th>
+                <th className="p-3 font-semibold border-b border-border">Cost (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {costItems.map(item => (
+                <tr key={item.id} className="hover:bg-accent/40 transition-colors">
+                  <td className="p-2 border-b border-border">
+                    <input
+                      type="text"
+                      value={item.name}
+                      onChange={e => handleChange(item.id, 'name', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background/80 text-foreground focus:outline-none focus:ring-2 focus:ring-primary font-sans shadow-sm"
+                      placeholder="Enter item name"
+                    />
+                  </td>
+                  <td className="p-2 border-b border-border">
+                    <input
+                      type="number"
+                      value={item.cost}
+                      onChange={e => handleChange(item.id, 'cost', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background/80 text-foreground focus:outline-none focus:ring-2 focus:ring-primary font-sans shadow-sm"
+                      placeholder="₹ 0"
+                      min="0"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <button
+          onClick={addNewRow}
+          className="mb-8 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold shadow-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          + Add New Row
+        </button>
+        <div className="text-right font-extrabold text-2xl text-primary bg-secondary/80 rounded-lg px-8 py-5 border border-border shadow">
+          Cost of Goods Sold (COGS) per Unit: <span className="text-primary">₹ {totalCOGS.toFixed(2)}</span>
+        </div>
       </div>
     </div>
   );
