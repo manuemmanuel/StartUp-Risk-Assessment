@@ -12,7 +12,7 @@ export default function SalaryPage() {
           &larr; Back to Instructions
         </Link>
         <Link
-          href="/cogs-calculator"
+          href="/forecast_pl"
           className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
         >
           Next: Forecast and PL

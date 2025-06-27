@@ -1,5 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
 type CostRow = { label: string; value: number };
 
@@ -30,7 +45,14 @@ const initialRows: Record<string, CostRow[]> = {
 };
 
 export default function StartupCostForm() {
-  const [rows, setRows] = useState(initialRows);
+  const STORAGE_KEY = "startup_cost_rows";
+  const [rows, setRows] = useState(() =>
+    loadFromStorage(STORAGE_KEY, initialRows)
+  );
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEY, rows);
+  }, [rows]);
 
   // Find the value for calculation
   const getValue = (groupKey: string, label: string) =>
