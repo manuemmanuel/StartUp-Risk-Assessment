@@ -31,7 +31,11 @@ export default function UnitEconomics() {
   const updateRow = (index: number, field: 'label' | 'value', value: string) => {
     setCustomRows(prev => {
       const updated = [...prev];
-      updated[index][field] = field === 'value' ? parseFloat(value) || 0 : value;
+      if (field === 'value') {
+        updated[index] = { ...updated[index], value: parseFloat(value) || 0 };
+      } else {
+        updated[index] = { ...updated[index], label: value };
+      }
       return updated;
     });
   };

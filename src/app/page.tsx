@@ -162,24 +162,56 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-background p-6 rounded-xl border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg group cursor-pointer"
-                onClick={() => document.getElementById(feature.href.slice(1))?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-foreground/70 text-sm">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {/* COGS Calculator */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">🧮</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">COGS Calculator</h3>
+              <p className="text-foreground/70 text-sm mb-4">Quickly calculate your true product costs so you can set profitable prices and understand your margins. This helps you avoid underpricing and ensures your business is sustainable.</p>
+              <a href="/cogs-calculator" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Sales Forecast */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">📈</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Sales Forecast</h3>
+              <p className="text-foreground/70 text-sm mb-4">Project your future sales to plan inventory, staffing, and funding needs. Accurate forecasts help you make confident business decisions and spot growth opportunities.</p>
+              <a href="/sales-forecast" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Salary Planning */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">👥</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Salary Planning</h3>
+              <p className="text-foreground/70 text-sm mb-4">Plan your team's compensation to attract and retain talent while keeping your business financially healthy. Understand the impact of salaries on your cash flow.</p>
+              <a href="/salaries" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Forecast P&L */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">📊</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Forecast P&L</h3>
+              <p className="text-foreground/70 text-sm mb-4">See your projected profits and losses to identify when your business will become profitable and what drives your bottom line. Make adjustments before problems arise.</p>
+              <a href="/forecast_pl" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Break-even Analysis */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">⚖️</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Break-even Analysis</h3>
+              <p className="text-foreground/70 text-sm mb-4">Find out how many sales you need to cover your costs. This helps you set realistic goals and track your progress toward profitability.</p>
+              <a href="/BreakEvenCalculator" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Funding Analysis */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">🏦</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Funding Analysis</h3>
+              <p className="text-foreground/70 text-sm mb-4">Understand how much money you need to raise and explore different funding options. This helps you avoid running out of cash and choose the best funding strategy.</p>
+              <a href="/funding" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
+            {/* Unit Economics */}
+            <div className="bg-background p-6 rounded-xl border border-border shadow hover:shadow-lg transition-all flex flex-col">
+              <div className="text-4xl mb-4">🎯</div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Unit Economics</h3>
+              <p className="text-foreground/70 text-sm mb-4">Measure the profitability of each customer or sale. This helps you optimize your business model and scale sustainably.</p>
+              <a href="/UnitEconomics" className="mt-auto text-primary hover:underline font-semibold">Learn more →</a>
+            </div>
           </div>
         </div>
       </section>
