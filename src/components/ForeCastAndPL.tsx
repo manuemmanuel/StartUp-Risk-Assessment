@@ -54,6 +54,18 @@ export default function ForecastPL() {
     setSalaryRows(loadFromStorage("salary_planner", defaultSalaryRows));
   }, []);
 
+  // Save all relevant Forecast & P&L data as a single object in localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const data = {
+        salesData,
+        salaryRows,
+        expenseRows,
+      };
+      localStorage.setItem("forecast_pl_data", JSON.stringify(data));
+    }
+  }, [salesData, salaryRows, expenseRows]);
+
   // Compute salary totals per month
   const totalSalariesPerMonth = Array(12)
     .fill(0)
@@ -116,6 +128,13 @@ export default function ForecastPL() {
       net_profit_margin,
     };
   });
+
+  // Save results to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("forecast_pl_results", JSON.stringify(results));
+    }
+  }, [results]);
 
   return (
     <div className="max-w-9xl mx-auto p-6 shadow rounded-lg">
