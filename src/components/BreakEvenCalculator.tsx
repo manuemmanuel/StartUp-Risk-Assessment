@@ -1,69 +1,152 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 
-export default function BreakEvenCalculator() {
-  const [pricePerUnit, setPricePerUnit] = useState(8);
-  const [costPerUnit, setCostPerUnit] = useState(0);
-  const [fixedCosts, setFixedCosts] = useState(0);
-  const [totalSales, setTotalSales] = useState(712);
-  const [operatingExpenses, setOperatingExpenses] = useState(0);
+type ExpenseRow = { label: string; values: number[] };
 
-  const grossProfit = pricePerUnit - costPerUnit;
-  const grossMarginPercent = pricePerUnit !== 0 ? (grossProfit / pricePerUnit) * 100 : 0;
-  const contributionMargin = grossMarginPercent; // same as gross margin in this case
-  const breakEvenUnits = grossProfit !== 0 ? Math.ceil(fixedCosts / grossProfit) : 0;
-  const breakEvenSales = grossProfit !== 0 ? breakEvenUnits * pricePerUnit : 0;
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
-  const yearlyBreakEven = operatingExpenses / (grossMarginPercent / 100 || 1);
-  const monthlyBreakEven = yearlyBreakEven / 12 || 0;
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+export default function BreakEvenAnalysis() {
+  const [salesData, setSalesData] = useState(() =>
+    loadFromStorage("sales_forecast_table", {
+      unitsSold: Array(12).fill(0),
+      pricePerUnit: Array(12).fill(0),
+      costPerUnit: Array(12).fill(0),
+    })
+  );
+
+  const [salaryRows, setSalaryRows] = useState(() =>
+    loadFromStorage("salary_planner", { rows: [] })
+  );
+
+  const [expenseRows, setExpenseRows] = useState<ExpenseRow[]>(() =>
+    loadFromStorage("forecast_expense_rows", [])
+  );
+
+  const yearlyUnits = salesData.unitsSold.reduce((a, b) => a + b, 0);
+  const yearlyRevenue = salesData.unitsSold.reduce(
+    (sum, val, i) => sum + val * salesData.pricePerUnit[i],
+    0
+  );
+  const yearlyCOGS = salesData.unitsSold.reduce(
+    (sum, val, i) => sum + val * salesData.costPerUnit[i],
+    0
+  );
+  const grossProfit = yearlyRevenue - yearlyCOGS;
+  const grossMarginPct = yearlyRevenue
+    ? (grossProfit / yearlyRevenue) * 100
+    : 0;
+
+  const totalSalaries = Array(12)
+    .fill(0)
+    .map((_, monthIdx) =>
+      salaryRows.rows.reduce(
+        (sum: number, row: any) => sum + (row.monthlySalaries?.[monthIdx] || 0),
+        0
+      )
+    );
+
+  const totalExpenses = Array(12)
+    .fill(0)
+    .map((_, monthIdx) =>
+      expenseRows.reduce((sum, row) => sum + (row.values?.[monthIdx] || 0), 0)
+    );
+
+  const totalFixedExpenses =
+    totalSalaries.reduce((a, b) => a + b, 0) +
+    totalExpenses.reduce((a, b) => a + b, 0);
+
+  const contributionMarginPct = yearlyRevenue
+    ? ((yearlyRevenue - yearlyCOGS) / yearlyRevenue) * 100
+    : 0;
+
+  const breakevenSales = contributionMarginPct
+    ? totalFixedExpenses / (contributionMarginPct / 100)
+    : 0;
+
+  const breakevenUnits = yearlyRevenue
+    ? breakevenSales / (yearlyRevenue / yearlyUnits || 1)
+    : 0;
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl border shadow">
-      <h2 className="text-2xl font-bold mb-4">Break-even Analysis</h2>
+    <div className="max-w-4xl mx-auto p-6 shadow-md rounded-xl">
+      <h2 className="text-2xl font-bold mb-4">Break-Even Analysis</h2>
 
-      {/* Inputs */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <label className="font-semibold">Average Sales Price per Unit (₹)</label>
-          <input type="number" value={pricePerUnit} onChange={e => setPricePerUnit(+e.target.value)} className="w-full border px-3 py-1 rounded" />
-        </div>
-        <div>
-          <label className="font-semibold">Average Cost per Unit (₹)</label>
-          <input type="number" value={costPerUnit} onChange={e => setCostPerUnit(+e.target.value)} className="w-full border px-3 py-1 rounded" />
-        </div>
-        <div>
-          <label className="font-semibold">Fixed Costs for the Year (₹)</label>
-          <input type="number" value={fixedCosts} onChange={e => setFixedCosts(+e.target.value)} className="w-full border px-3 py-1 rounded" />
-        </div>
-        <div>
-          <label className="font-semibold">Total Sales for the Year (₹)</label>
-          <input type="number" value={totalSales} onChange={e => setTotalSales(+e.target.value)} className="w-full border px-3 py-1 rounded" />
-        </div>
-        <div>
-          <label className="font-semibold">Operating Expenses (₹)</label>
-          <input type="number" value={operatingExpenses} onChange={e => setOperatingExpenses(+e.target.value)} className="w-full border px-3 py-1 rounded" />
-        </div>
-      </div>
-
-      {/* Output */}
-      <div className="space-y-2 text-gray-800">
-        <p><strong>Gross Profit Margin:</strong> {grossMarginPercent.toFixed(2)}%</p>
-        <p><strong>Contribution Margin:</strong> {contributionMargin.toFixed(2)}%</p>
-        <p><strong>Gross Profit for the Year:</strong> ₹{grossProfit * breakEvenUnits}</p>
-        <p><strong>Sales Required to Break Even:</strong> ₹{breakEvenSales}</p>
-        <p><strong>Number of Unit Sales to Break Even:</strong> {breakEvenUnits}</p>
-        <p><strong>Gross Margin / Total Sales:</strong> {(grossProfit * breakEvenUnits / totalSales * 100 || 0).toFixed(2)}%</p>
-        <p><strong>Yearly Break-even Amount:</strong> ₹{yearlyBreakEven.toFixed(2)}</p>
-        <p><strong>Monthly Break-even Amount:</strong> ₹{monthlyBreakEven.toFixed(2)}</p>
-      </div>
-
-      {/* Hint */}
-      <div className="mt-6 bg-yellow-50 p-4 border-l-4 border-yellow-400">
-        <p className="text-sm text-yellow-700">
-          The break-even point is the number of units you need to sell to cover your costs. Use this tool to experiment with different prices, costs, or expenses and explore “what if” scenarios.
-        </p>
-      </div>
+      <table className="table-auto w-full text-left border-collapse">
+        <tbody>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Average Sales Price per Unit</td>
+            <td>
+              ₹ {yearlyUnits ? (yearlyRevenue / yearlyUnits).toFixed(2) : "0"}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Average Cost per Unit</td>
+            <td>
+              ₹ {yearlyUnits ? (yearlyCOGS / yearlyUnits).toFixed(2) : "0"}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Gross Profit Margin</td>
+            <td>{grossMarginPct.toFixed(2)}%</td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">
+              Total Fixed Costs (Salaries + Expenses)
+            </td>
+            <td>₹ {totalFixedExpenses.toLocaleString("en-IN")}</td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Contribution Margin %</td>
+            <td>{contributionMarginPct.toFixed(2)}%</td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Breakeven Sales (₹)</td>
+            <td>
+              ₹{" "}
+              {breakevenSales.toLocaleString("en-IN", {
+                maximumFractionDigits: 0,
+              })}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Breakeven Units</td>
+            <td>{Math.ceil(breakevenUnits)}</td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2 font-semibold">Monthly Breakeven Sales</td>
+            <td>
+              ₹{" "}
+              {(breakevenSales / 12).toLocaleString("en-IN", {
+                maximumFractionDigits: 0,
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

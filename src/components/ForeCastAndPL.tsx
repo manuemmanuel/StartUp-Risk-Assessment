@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import FinancialVisualizations from './FinancialVisualizations';
-import FinancialPredictions from './FinancialPredictions';
+import FinancialVisualizations from "./FinancialVisualizations";
+import FinancialPredictions from "./FinancialPredictions";
 
 const months = [
   "Jan",
@@ -212,7 +212,10 @@ export default function ForecastPL() {
               <tr className="border-b border-border/30">
                 <td className="p-3">Cost of Services</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                  <td
+                    key={i}
+                    className="p-3 text-center font-mono text-red-600"
+                  >
                     ₹{r.cost_of_services.toLocaleString("en-IN")}
                   </td>
                 ))}
@@ -222,7 +225,10 @@ export default function ForecastPL() {
               <tr className="bg-primary/10 font-semibold border-b border-border/50">
                 <td className="p-3 text-lg">Gross Profit</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-3 text-center font-mono text-green-600">
+                  <td
+                    key={i}
+                    className="p-3 text-center font-mono text-green-600"
+                  >
                     ₹{r.gross_profit.toLocaleString("en-IN")}
                   </td>
                 ))}
@@ -232,7 +238,10 @@ export default function ForecastPL() {
               <tr className="border-b border-border/30">
                 <td className="p-3">Salary</td>
                 {totalSalariesPerMonth.map((val: number, i: number) => (
-                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                  <td
+                    key={i}
+                    className="p-3 text-center font-mono text-red-600"
+                  >
                     ₹{val.toLocaleString("en-IN")}
                   </td>
                 ))}
@@ -294,7 +303,10 @@ export default function ForecastPL() {
               <tr className="bg-secondary/80 font-semibold border-b border-border/50">
                 <td className="p-3 text-lg">Total Expenses</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-3 text-center font-mono text-red-600">
+                  <td
+                    key={i}
+                    className="p-3 text-center font-mono text-red-600"
+                  >
                     ₹{r.total_expenses.toLocaleString("en-IN")}
                   </td>
                 ))}
@@ -304,7 +316,14 @@ export default function ForecastPL() {
               <tr className="bg-accent/50 font-semibold border-b border-border/50">
                 <td className="p-3 text-lg">Net Profit/Loss</td>
                 {results.map((r, i) => (
-                  <td key={i} className={`p-3 text-center font-mono text-lg ${r.net_profit_or_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <td
+                    key={i}
+                    className={`p-3 text-center font-mono text-lg ${
+                      r.net_profit_or_loss >= 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     ₹{r.net_profit_or_loss.toLocaleString("en-IN")}
                   </td>
                 ))}
@@ -314,7 +333,10 @@ export default function ForecastPL() {
               <tr className="border-b border-border/30">
                 <td className="p-3">Gross Profit Margin</td>
                 {results.map((r, i) => (
-                  <td key={i} className="p-3 text-center font-mono text-green-600">
+                  <td
+                    key={i}
+                    className="p-3 text-center font-mono text-green-600"
+                  >
                     {(r.gross_profit_margin * 100).toFixed(2)}%
                   </td>
                 ))}
@@ -324,7 +346,14 @@ export default function ForecastPL() {
               <tr className="border-b border-border/30">
                 <td className="p-3">Net Profit Margin</td>
                 {results.map((r, i) => (
-                  <td key={i} className={`p-3 text-center font-mono ${r.net_profit_margin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <td
+                    key={i}
+                    className={`p-3 text-center font-mono ${
+                      r.net_profit_margin >= 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     {(r.net_profit_margin * 100).toFixed(2)}%
                   </td>
                 ))}
