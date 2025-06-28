@@ -1,10 +1,10 @@
 // pages/finance-glossary.tsx (or any page file you want)
-import FinancialTerms from '@/components/FinancialTerms'; // Adjust path if needed
+import Glossary from '@/components/Glossary';
 
-export default function FinanceGlossaryPage() {
+export default function GlossaryPage() {
   return (
-    <main>
-      <FinancialTerms />
+    <main className="min-h-screen bg-background pt-16">
+      <Glossary />
     </main>
   );
 }
