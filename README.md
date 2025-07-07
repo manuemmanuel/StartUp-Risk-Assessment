@@ -16,7 +16,7 @@ This project provides a risk evaluation framework that identifies vulnerabilitie
 ---
 
 ## 🏗️ Project Structure
-
+```bash
 StartUp-Risk-Assessmenent/
 ├── public/
 │ └── assets/
@@ -30,7 +30,7 @@ StartUp-Risk-Assessmenent/
 └── README.md
 
 
----
+```
 
 ## 🧰 Tech Stack
 
